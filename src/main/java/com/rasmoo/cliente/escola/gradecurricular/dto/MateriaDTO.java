@@ -20,7 +20,7 @@ public class MateriaDTO {
 	@Max(value = 120, message = "Permitido o máximo de 120 horas por matéria.")
 	private int horas;
 	
-	@NotBlank(message = "Informe o nome da matéria.")
+	@NotBlank(message = "Informe o código da matéria.")
 	private String codigo;
 	
 	@Min(value = 1, message = "Permitido o mínimo de 1 vez ao ano.")

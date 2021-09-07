@@ -1,6 +1,5 @@
 package com.rasmoo.cliente.escola.gradecurricular.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,20 +18,26 @@ import com.rasmoo.cliente.escola.gradecurricular.service.IMateriaService;
 @Service
 public class MateriaService implements IMateriaService {
 	
-	@Autowired
+	private static final String MATERIA_NAO_ENCONTRADA = "Materia não encontrada";
+	private static final String MENSAGEM_ERRO = "Erro interno identificado. Contate o suporte";
+	
 	private IMateriaRepository materiaRepository;
-	
-	@Autowired
 	private ModelMapper mapper;
-	
+		
+	@Autowired
+	public MateriaService(IMateriaRepository materiaRepository) {
+		this.materiaRepository = materiaRepository;
+		this.mapper = new ModelMapper();
+	}
+
 		@Override
 		public List<MateriaDTO> listarTodos() {
 			try {
 				List<MateriaEntity> list = this.materiaRepository.findAll();
-				List<MateriaDTO> listDTO = list.stream().map(entity -> mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+				List<MateriaDTO> listDTO = list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
 				return listDTO;
 			} catch (Exception e) {
-				return new ArrayList<>();
+				throw new MateriaException(MENSAGEM_ERRO, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
@@ -41,24 +46,24 @@ public class MateriaService implements IMateriaService {
 			try {
 				Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(id);
 				if (materiaOptional.isPresent()) {
-					return mapper.map(materiaOptional.get(), MateriaDTO.class);
+					return this.mapper.map(materiaOptional.get(), MateriaDTO.class);
 				}
-				throw new MateriaException("Materia não encontrada", HttpStatus.NOT_FOUND);
+				throw new MateriaException(MATERIA_NAO_ENCONTRADA, HttpStatus.NOT_FOUND);
 			} catch (MateriaException m) {
 				throw m;
 			} catch (Exception e) {
-				throw new MateriaException("Erro interno identificado. Contate o suporte", HttpStatus.INTERNAL_SERVER_ERROR);
+				throw new MateriaException(MENSAGEM_ERRO, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
 		@Override
 		public Boolean salvar(MateriaDTO materiaDTO) {
 			try {
-				MateriaEntity materiaEntity = mapper.map(materiaDTO, MateriaEntity.class);
+				MateriaEntity materiaEntity = this.mapper.map(materiaDTO, MateriaEntity.class);
 				this.materiaRepository.save(materiaEntity);
-				return true;				
+				return Boolean.TRUE;				
 			} catch (Exception e) {
-				return false;
+				throw new MateriaException(MENSAGEM_ERRO, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		
@@ -67,11 +72,11 @@ public class MateriaService implements IMateriaService {
 			try {	
 				Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(materiaDTO.getId());				
 				if (materiaOptional.isPresent()) {
-					MateriaEntity materiaEntityAtualizada = mapper.map(materiaDTO, MateriaEntity.class);
+					MateriaEntity materiaEntityAtualizada = this.mapper.map(materiaDTO, MateriaEntity.class);
 					this.materiaRepository.save(materiaEntityAtualizada);						
-					return true;				
+					return Boolean.TRUE;				
 				}
-				return false;
+				return Boolean.FALSE;
 			} catch (MateriaException m) {
 				throw m;
 			} catch (Exception e) {
@@ -84,7 +89,7 @@ public class MateriaService implements IMateriaService {
 			try {
 				this.buscarPorId(id);
 				this.materiaRepository.deleteById(id);
-				return true;	
+				return Boolean.TRUE;	
 			} catch (MateriaException m) {
 				throw m;
 			} catch (Exception e) {
