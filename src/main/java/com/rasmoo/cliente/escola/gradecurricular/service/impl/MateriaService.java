@@ -1,16 +1,20 @@
-package com.rasmoo.cliente.escola.gradecurricular.service;
+package com.rasmoo.cliente.escola.gradecurricular.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.rasmoo.cliente.escola.gradecurricular.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
 import com.rasmoo.cliente.escola.gradecurricular.exception.MateriaException;
 import com.rasmoo.cliente.escola.gradecurricular.repository.IMateriaRepository;
+import com.rasmoo.cliente.escola.gradecurricular.service.IMateriaService;
 
 @Service
 public class MateriaService implements IMateriaService {
@@ -18,21 +22,26 @@ public class MateriaService implements IMateriaService {
 	@Autowired
 	private IMateriaRepository materiaRepository;
 	
+	@Autowired
+	private ModelMapper mapper;
+	
 		@Override
-		public List<MateriaEntity> listarTodos() {
+		public List<MateriaDTO> listarTodos() {
 			try {
-				return this.materiaRepository.findAll();
+				List<MateriaEntity> list = this.materiaRepository.findAll();
+				List<MateriaDTO> listDTO = list.stream().map(entity -> mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+				return listDTO;
 			} catch (Exception e) {
 				return new ArrayList<>();
 			}
 		}
 
 		@Override
-		public MateriaEntity buscarPorId(Long id) {
+		public MateriaDTO buscarPorId(Long id) {
 			try {
 				Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(id);
 				if (materiaOptional.isPresent()) {
-					return materiaOptional.get();
+					return mapper.map(materiaOptional.get(), MateriaDTO.class);
 				}
 				throw new MateriaException("Materia não encontrada", HttpStatus.NOT_FOUND);
 			} catch (MateriaException m) {
@@ -43,9 +52,10 @@ public class MateriaService implements IMateriaService {
 		}
 
 		@Override
-		public Boolean salvar(MateriaEntity materia) {
+		public Boolean salvar(MateriaDTO materiaDTO) {
 			try {
-				this.materiaRepository.save(materia);
+				MateriaEntity materiaEntity = mapper.map(materiaDTO, MateriaEntity.class);
+				this.materiaRepository.save(materiaEntity);
 				return true;				
 			} catch (Exception e) {
 				return false;
@@ -53,21 +63,15 @@ public class MateriaService implements IMateriaService {
 		}
 		
 		@Override
-		public Boolean atualizar(MateriaEntity materia) {
+		public Boolean atualizar(MateriaDTO materiaDTO) {
 			try {	
-				//Invocamos o método buscarPorId, que irá fazer a verificação da existência o obj.
-		        //Caso não haja, retornará uma exceção.
-				MateriaEntity materiaEntityAtualizada = this.buscarPorId(materia.getId());
-								
-				//atualizamos todos os valores
-				materiaEntityAtualizada.setNome(materia.getNome());
-				materiaEntityAtualizada.setCodigo(materia.getCodigo());
-				materiaEntityAtualizada.setHoras(materia.getHoras());
-				materiaEntityAtualizada.setFrequencia(materia.getFrequencia());
-					
-				//salvamos as alteracoes
-				this.materiaRepository.save(materiaEntityAtualizada);	
-				return true;				
+				Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(materiaDTO.getId());				
+				if (materiaOptional.isPresent()) {
+					MateriaEntity materiaEntityAtualizada = mapper.map(materiaDTO, MateriaEntity.class);
+					this.materiaRepository.save(materiaEntityAtualizada);						
+					return true;				
+				}
+				return false;
 			} catch (MateriaException m) {
 				throw m;
 			} catch (Exception e) {
@@ -87,6 +91,5 @@ public class MateriaService implements IMateriaService {
 				throw e;
 			}
 		}
-
 		
 }

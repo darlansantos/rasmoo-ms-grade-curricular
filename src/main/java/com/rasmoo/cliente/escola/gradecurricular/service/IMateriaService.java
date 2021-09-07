@@ -2,17 +2,17 @@ package com.rasmoo.cliente.escola.gradecurricular.service;
 
 import java.util.List;
 
-import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
+import com.rasmoo.cliente.escola.gradecurricular.dto.MateriaDTO;
 
 public interface IMateriaService {
 	
-	public List<MateriaEntity> listarTodos();
+	public List<MateriaDTO> listarTodos();
 	
-	public MateriaEntity buscarPorId(final Long id);
+	public MateriaDTO buscarPorId(final Long id);
 	
-	public Boolean salvar(final MateriaEntity materia);
+	public Boolean salvar(final MateriaDTO materiaDTO);
 	
-	public Boolean atualizar(final MateriaEntity materia);
+	public Boolean atualizar(final MateriaDTO materiaDTO);
 	
 	public Boolean excluir(final Long id);
 
