@@ -16,4 +16,8 @@ public interface IMateriaService {
 	
 	public Boolean excluir(final Long id);
 
+	public List<MateriaDTO> listarPorHorarioMinimo(int horaMinima);
+
+	public List<MateriaDTO> listarPorFrequencia(int frequencia);
+
 }

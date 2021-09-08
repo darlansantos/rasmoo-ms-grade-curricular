@@ -103,5 +103,17 @@ public class MateriaServiceImpl implements IMateriaService {
 				throw e;
 			}
 		}
+
+		@Override
+		public List<MateriaDTO> listarPorHorarioMinimo(int horaMinima) {
+			List<MateriaEntity> list = this.materiaRepository.findByHoraMinima(horaMinima);
+			return list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+		}
+
+		@Override
+		public List<MateriaDTO> listarPorFrequencia(int frequencia) {
+			List<MateriaEntity> list = this.materiaRepository.findByFrequencia(frequencia);
+			return list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+		}
 		
 }
