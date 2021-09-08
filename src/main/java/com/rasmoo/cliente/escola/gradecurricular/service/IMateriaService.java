@@ -8,13 +8,13 @@ public interface IMateriaService {
 	
 	public List<MateriaDTO> listarTodos();
 	
-	public MateriaDTO buscarPorId(final Long id);
+	public MateriaDTO buscarPorId(Long id);
 	
-	public Boolean salvar(final MateriaDTO materiaDTO);
+	public Boolean salvar(MateriaDTO materiaDTO);
 	
-	public Boolean atualizar(final MateriaDTO materiaDTO);
+	public Boolean atualizar(MateriaDTO materiaDTO);
 	
-	public Boolean excluir(final Long id);
+	public Boolean excluir(Long id);
 
 	public List<MateriaDTO> listarPorHorarioMinimo(int horaMinima);
 
