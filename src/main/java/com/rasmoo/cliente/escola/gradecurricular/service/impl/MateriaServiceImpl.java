@@ -8,9 +8,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.rasmoo.cliente.escola.gradecurricular.controller.MateriaController;
 import com.rasmoo.cliente.escola.gradecurricular.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
 import com.rasmoo.cliente.escola.gradecurricular.exception.MateriaException;
@@ -38,7 +40,10 @@ public class MateriaServiceImpl implements IMateriaService {
 		public List<MateriaDTO> listarTodos() {
 			try {
 				List<MateriaEntity> list = this.materiaRepository.findAll();
-				List<MateriaDTO> listDTO = list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+				List<MateriaDTO> listDTO = list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());		
+				listDTO.forEach(materia -> 
+					materia.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MateriaController.class).consultarMateria(materia.getId())).withSelfRel())
+				);
 				return listDTO;
 			} catch (Exception e) {
 				throw new MateriaException(MENSAGEM_ERRO, HttpStatus.INTERNAL_SERVER_ERROR);
