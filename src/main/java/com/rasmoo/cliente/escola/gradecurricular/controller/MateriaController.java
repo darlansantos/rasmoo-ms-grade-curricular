@@ -20,7 +20,7 @@ import com.rasmoo.cliente.escola.gradecurricular.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.gradecurricular.service.IMateriaService;
 
 @RestController
-@RequestMapping("/materia")
+@RequestMapping(value = "/materia")
 public class MateriaController {
 		
 	@Autowired
@@ -47,7 +47,7 @@ public class MateriaController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<Boolean> atualizarMateria(@Valid @RequestBody MateriaDTO materiaDTO) {			
+	public ResponseEntity<Boolean> atualizarMateria(@RequestBody MateriaDTO materiaDTO) {			
 			return ResponseEntity.status(HttpStatus.OK).body(this.materiaService.atualizar(materiaDTO));
 	}
 

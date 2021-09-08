@@ -39,7 +39,7 @@ public class MateriaEntity implements Serializable {
 	private int horas;
 	
 	@JsonInclude(Include.NON_EMPTY)
-	@Column(name = "codigo")
+	@Column(name = "cod")
 	private String codigo;
 	
 	@Column(name = "freq")
