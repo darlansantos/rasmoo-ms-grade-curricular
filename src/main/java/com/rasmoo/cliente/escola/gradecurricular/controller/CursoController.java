@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rasmoo.cliente.escola.gradecurricular.dto.CursoDTO;
 import com.rasmoo.cliente.escola.gradecurricular.entity.CursoEntity;
-import com.rasmoo.cliente.escola.gradecurricular.model.CursoModel;
 import com.rasmoo.cliente.escola.gradecurricular.model.Response;
 import com.rasmoo.cliente.escola.gradecurricular.service.ICursoService;
 
@@ -29,10 +29,10 @@ public class CursoController {
 	private ICursoService cursoService;
 	
 	@PostMapping
-	public ResponseEntity<Response<Boolean>> cadastrarCurso(@Valid @RequestBody CursoModel cursoModel) {
+	public ResponseEntity<Response<Boolean>> cadastrarCurso(@Valid @RequestBody CursoDTO cursoDTO) {
 
 		Response<Boolean> response = new Response<>();
-		response.setData(cursoService.cadastrar(cursoModel));
+		response.setData(cursoService.cadastrar(cursoDTO));
 		response.setStatusCode(HttpStatus.OK.value());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
@@ -54,7 +54,7 @@ public class CursoController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<Response<Boolean>> atualizarCurso(@Valid @RequestBody CursoModel curso) {
+	public ResponseEntity<Response<Boolean>> atualizarCurso(@Valid @RequestBody CursoDTO curso) {
 		Response<Boolean> response = new Response<>();
 		response.setData(cursoService.atualizar(curso));
 		response.setStatusCode(HttpStatus.OK.value());

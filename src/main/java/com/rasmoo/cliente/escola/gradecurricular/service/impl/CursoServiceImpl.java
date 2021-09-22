@@ -10,10 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.rasmoo.cliente.escola.gradecurricular.constant.MessagesConstant;
+import com.rasmoo.cliente.escola.gradecurricular.dto.CursoDTO;
 import com.rasmoo.cliente.escola.gradecurricular.entity.CursoEntity;
 import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
 import com.rasmoo.cliente.escola.gradecurricular.exception.CursoException;
-import com.rasmoo.cliente.escola.gradecurricular.model.CursoModel;
 import com.rasmoo.cliente.escola.gradecurricular.repository.ICursoRepository;
 import com.rasmoo.cliente.escola.gradecurricular.repository.IMateriaRepository;
 import com.rasmoo.cliente.escola.gradecurricular.service.ICursoService;
@@ -33,18 +33,18 @@ public class CursoServiceImpl implements ICursoService {
 	}
 
 	@Override
-	public Boolean cadastrar(CursoModel cursoModel) {
+	public Boolean cadastrar(CursoDTO cursoDTO) {
 		try {
 			// O id não pode ser informado no cadastro
-			if (cursoModel.getId() != null) {
+			if (cursoDTO.getId() != null) {
 				throw new CursoException(MessagesConstant.ERRO_ID_INFORMADO.getValor(), HttpStatus.BAD_REQUEST);
 			}
 		
 			// Não permite fazer cadastro de cursos com mesmos códigos.
-			if (this.cursoRepository.findCursoByCodigo(cursoModel.getCodCurso()) != null) {
+			if (this.cursoRepository.findCursoByCodigo(cursoDTO.getCodCurso()) != null) {
 				throw new CursoException(MessagesConstant.ERRO_CURSO_CADASTRADO_ANTERIORMENTE.getValor(), HttpStatus.BAD_REQUEST);
 			}
-			return this.cadastrarOuAtualizar(cursoModel);
+			return this.cadastrarOuAtualizar(cursoDTO);
 		}catch (CursoException c) {
 			throw c;
 		}
@@ -54,11 +54,11 @@ public class CursoServiceImpl implements ICursoService {
 	}
 
 	@Override
-	public Boolean atualizar(CursoModel cursoModel) {
+	public Boolean atualizar(CursoDTO cursoDTO) {
 		
 		try {
-			this.consultarPorCodigo(cursoModel.getCodCurso());
-			return this.cadastrarOuAtualizar(cursoModel);
+			this.consultarPorCodigo(cursoDTO.getCodCurso());
+			return this.cadastrarOuAtualizar(cursoDTO);
 		} catch (CursoException c) {
 			throw c;
 		} catch (Exception e) {
@@ -106,23 +106,23 @@ public class CursoServiceImpl implements ICursoService {
 	}
 	
 	// O cadastrar e atualizar tem comportamentos semelhantes então centralizamos esse comportamento.
-	private Boolean cadastrarOuAtualizar(CursoModel cursoModel) {
+	private Boolean cadastrarOuAtualizar(CursoDTO cursoDTO) {
 		List<MateriaEntity> listMateriaEntity = new ArrayList<>();
 
-		if (!cursoModel.getMaterias().isEmpty()) {
+		if (!cursoDTO.getMaterias().isEmpty()) {
 
-			cursoModel.getMaterias().forEach(materia -> {
+			cursoDTO.getMaterias().forEach(materia -> {
 				if (this.materiaRepository.findById(materia).isPresent())
 					listMateriaEntity.add(this.materiaRepository.findById(materia).get());
 			});
 		}
 
 		CursoEntity cursoEntity = new CursoEntity();
-		if(cursoModel.getId()!=null) {
-			cursoEntity.setId(cursoModel.getId());
+		if(cursoDTO.getId()!=null) {
+			cursoEntity.setId(cursoDTO.getId());
 		}
-		cursoEntity.setCodigo(cursoModel.getCodCurso());
-		cursoEntity.setNome(cursoModel.getNome());
+		cursoEntity.setCodigo(cursoDTO.getCodCurso());
+		cursoEntity.setNome(cursoDTO.getNome());
 		cursoEntity.setMaterias(listMateriaEntity);
 
 		this.cursoRepository.save(cursoEntity);
