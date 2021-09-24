@@ -2,7 +2,6 @@ package com.rasmoo.cliente.escola.gradecurricular.controller;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -38,18 +37,14 @@ class MateriaControllerTest {
 	@MockBean
 	private IMateriaService materiaService;
 	
-	private static MateriaDTO materiaDTO;
+	//private static MateriaDTO materiaDTO;
 
-	@BeforeAll
-	public static void init() {	
-		criarMateriaDTO();
-	}
 	
 	@Test
 	void testListarMaterias() throws Exception {
 		
 		// Cenario	
-		Mockito.when(materiaService.listarTodos()).thenReturn(new ArrayList<MateriaDTO>());
+		Mockito.when(this.materiaService.listarTodos()).thenReturn(new ArrayList<MateriaDTO>());
 		
 		// Execucao e Verificacao
 		MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -57,7 +52,7 @@ class MateriaControllerTest {
 													.accept(JSON)
 													.contentType(JSON);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -68,7 +63,7 @@ class MateriaControllerTest {
 		
 		// Cenario	
 		MateriaDTO dto = criarMateriaDTO();
-		Mockito.when(materiaService.buscarPorId(1L)).thenReturn(dto);
+		Mockito.when(this.materiaService.buscarPorId(1L)).thenReturn(dto);
 		
 		// Execucao e Verificacao
 		MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -76,7 +71,7 @@ class MateriaControllerTest {
 													.accept(JSON)
 													.contentType(JSON);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -87,7 +82,7 @@ class MateriaControllerTest {
 		
 		// Cenario
 		MateriaDTO dto = criarMateriaDTO();	
-		Mockito.when(this.materiaService.salvar(materiaDTO)).thenReturn(Boolean.TRUE);
+		Mockito.when(this.materiaService.salvar(dto)).thenReturn(Boolean.TRUE);
 		String json = new ObjectMapper().writeValueAsString(dto);
 		
 		// Execucao e Verificacao
@@ -97,7 +92,7 @@ class MateriaControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 		;	
@@ -118,7 +113,7 @@ class MateriaControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -139,7 +134,7 @@ class MateriaControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -150,7 +145,7 @@ class MateriaControllerTest {
 		
 		// Cenario
 		MateriaDTO dto = criarMateriaDTO();
-		Mockito.when(materiaService.listarPorHorarioMinimo(64)).thenReturn(new ArrayList<MateriaDTO>());
+		Mockito.when(this.materiaService.listarPorHorarioMinimo(64)).thenReturn(new ArrayList<MateriaDTO>());
 		String json = new ObjectMapper().writeValueAsString(dto);
 		
 		// Execucao e Verificacao
@@ -160,7 +155,7 @@ class MateriaControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -171,7 +166,7 @@ class MateriaControllerTest {
 		
 		// Cenario
 		MateriaDTO dto = criarMateriaDTO();
-		Mockito.when(materiaService.listarPorFrequencia(1)).thenReturn(new ArrayList<MateriaDTO>());
+		Mockito.when(this.materiaService.listarPorFrequencia(1)).thenReturn(new ArrayList<MateriaDTO>());
 		String json = new ObjectMapper().writeValueAsString(dto);
 		
 		// Execucao e Verificacao
@@ -181,13 +176,13 @@ class MateriaControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
 	}
 	
-	private static MateriaDTO criarMateriaDTO() {
+	public static MateriaDTO criarMateriaDTO() {
 		MateriaDTO dto = new MateriaDTO();
 		dto.setId(1L);
 		dto.setCodigo("ILP");

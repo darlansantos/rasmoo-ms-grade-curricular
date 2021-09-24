@@ -2,7 +2,6 @@ package com.rasmoo.cliente.escola.gradecurricular.controller;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -39,20 +38,15 @@ class CursoControllerTest {
 	@MockBean
 	private ICursoService cursoService;
 	
-	private static CursoDTO cursoDTO;
+	//private static CursoDTO cursoDTO;
 	
-	@BeforeAll
-	public static void init() {	
-		criarCursoDTO();
-	}
-
 	@Test
 	void testCadastrarCursos() throws Exception {
 		
 		// Cenario
 		CursoDTO dto = criarCursoDTO();
 		
-		Mockito.when(cursoService.cadastrar(cursoDTO)).thenReturn(Boolean.TRUE);
+		Mockito.when(this.cursoService.cadastrar(dto)).thenReturn(Boolean.TRUE);
 		String json = new ObjectMapper().writeValueAsString(dto);
 		
 		// Execucao e Verificacao
@@ -62,7 +56,7 @@ class CursoControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 	    ;
@@ -72,7 +66,7 @@ class CursoControllerTest {
 	void testListarCursos() throws Exception {
 		
 		// Cenario	
-		Mockito.when(cursoService.listar()).thenReturn(new ArrayList<CursoEntity>());
+		Mockito.when(this.cursoService.listar()).thenReturn(new ArrayList<CursoEntity>());
 		
 		// Execucao e Verificacao
 		MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -80,7 +74,7 @@ class CursoControllerTest {
 													.accept(JSON)
 													.contentType(JSON);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -91,7 +85,7 @@ class CursoControllerTest {
 	void testConsultarCursosPorMateria() throws Exception {
 		
 		// Cenario	
-		Mockito.when(cursoService.consultarPorCodigo("POO")).thenReturn(new CursoEntity());
+		Mockito.when(this.cursoService.consultarPorCodigo("POO")).thenReturn(new CursoEntity());
 		
 		// Execucao e Verificacao
 		MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -99,7 +93,7 @@ class CursoControllerTest {
 													.accept(JSON)
 													.contentType(JSON);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -110,7 +104,7 @@ class CursoControllerTest {
 		
 		// Cenario
 		CursoDTO dto = criarCursoDTO();
-		Mockito.when(cursoService.atualizar(dto)).thenReturn(Boolean.TRUE);
+		Mockito.when(this.cursoService.atualizar(dto)).thenReturn(Boolean.TRUE);
 		String json = new ObjectMapper().writeValueAsString(dto);
 		
 		// Execucao e Verificacao
@@ -120,7 +114,7 @@ class CursoControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
@@ -131,7 +125,7 @@ class CursoControllerTest {
 		
 		// Cenario
 		CursoDTO dto = criarCursoDTO();
-		Mockito.when(cursoService.atualizar(dto)).thenReturn(Boolean.TRUE);
+		Mockito.when(this.cursoService.atualizar(dto)).thenReturn(Boolean.TRUE);
 		String json = new ObjectMapper().writeValueAsString(dto);
 		
 		// Execucao e Verificacao
@@ -141,7 +135,7 @@ class CursoControllerTest {
 													.contentType(JSON)
 													.content(json);
 		
-		mvc
+		this.mvc
 			.perform(request)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 		;	
