@@ -137,10 +137,14 @@ class MateriaServiceImplTest {
 		
 		materiaEntity.setId(null);
 		
+		Mockito.when(this.materiaRepository.findByCodigo("ILP")).thenReturn(null);
 		Mockito.when(this.materiaRepository.save(materiaEntity)).thenReturn(materiaEntity);
+		
 		Boolean sucesso = this.materiaService.salvar(materiaDTO);
 		
 		assertTrue(sucesso);
+		
+		Mockito.verify(this.materiaRepository, times(1)).findByCodigo("ILP");
 		Mockito.verify(this.materiaRepository, times(1)).save(materiaEntity);
 		
 		materiaEntity.setId(1L);
@@ -163,6 +167,7 @@ class MateriaServiceImplTest {
 		
 		assertTrue(sucesso);
 		
+		Mockito.verify(this.materiaRepository, times(0)).findByCodigo("ILP");
 		Mockito.verify(this.materiaRepository, times(1)).findById(1L);
 		Mockito.verify(this.materiaRepository, times(1)).save(materiaEntity);		
 	}
@@ -175,8 +180,10 @@ class MateriaServiceImplTest {
 		
 		assertTrue(sucesso);
 		
+		Mockito.verify(this.materiaRepository, times(0)).findByCodigo("ILP");
 		Mockito.verify(this.materiaRepository, times(1)).findById(1L);
 		Mockito.verify(this.materiaRepository, times(1)).deleteById(1L);
+		Mockito.verify(this.materiaRepository, times(0)).save(materiaEntity);
 	}
 
 }
