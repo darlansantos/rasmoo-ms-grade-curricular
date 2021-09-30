@@ -3,6 +3,7 @@ package com.rasmoo.cliente.escola.gradecurricular.service.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
@@ -18,9 +19,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
+import com.rasmoo.cliente.escola.gradecurricular.constant.MessagesConstant;
 import com.rasmoo.cliente.escola.gradecurricular.dto.MateriaDTO;
 import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
+import com.rasmoo.cliente.escola.gradecurricular.exception.MateriaException;
 import com.rasmoo.cliente.escola.gradecurricular.repository.IMateriaRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -184,6 +188,85 @@ class MateriaServiceImplTest {
 		Mockito.verify(this.materiaRepository, times(1)).findById(1L);
 		Mockito.verify(this.materiaRepository, times(1)).deleteById(1L);
 		Mockito.verify(this.materiaRepository, times(0)).save(materiaEntity);
+	}
+	
+	
+	/*
+	 * CENARIOS DE THROW-MATERIA-EXCEPTION
+	 */
+	
+	@Test
+	void testAtualizarThrowMateriaException() {
+		
+		MateriaDTO materiaDTO = new MateriaDTO();
+		materiaDTO.setId(1L);
+		materiaDTO.setNome("INTRODUCAO A LINGUAGEM DE PROGRAMACAO");
+		materiaDTO.setCodigo("ILP");
+		materiaDTO.setFrequencia(1);
+		materiaDTO.setHoras(64);
+		
+		Mockito.when(this.materiaRepository.findById(1L)).thenReturn(Optional.empty());
+		
+		MateriaException materiaException = assertThrows(MateriaException.class, () -> this.materiaService.atualizar(materiaDTO));
+		
+		assertEquals(HttpStatus.NOT_FOUND, materiaException.getHttpStatus());
+		assertEquals(MessagesConstant.ERRO_MATERIA_NAO_ENCONTRADA.getValor(), materiaException.getMessage());
+		
+		Mockito.verify(this.materiaRepository, times(1)).findById(1L);
+		Mockito.verify(this.materiaRepository, times(0)).save(materiaEntity);		
+	}
+		
+	@Test
+	void testExcluirThrowMateriaException() {
+				
+		Mockito.when(this.materiaRepository.findById(1L)).thenReturn(Optional.empty());
+		
+		MateriaException materiaException = assertThrows(MateriaException.class, () -> this.materiaService.excluir(1L));
+		
+		assertEquals(HttpStatus.NOT_FOUND, materiaException.getHttpStatus());
+		assertEquals(MessagesConstant.ERRO_MATERIA_NAO_ENCONTRADA.getValor(), materiaException.getMessage());
+		
+		Mockito.verify(this.materiaRepository, times(1)).findById(1L);
+		Mockito.verify(this.materiaRepository, times(0)).deleteById(1L);;		
+	}
+	
+	@Test
+	void testCadastrarComIdThrowMateriaException() {
+		
+		MateriaDTO materiaDTO = new MateriaDTO();
+		materiaDTO.setId(1L);
+		materiaDTO.setNome("INTRODUCAO A LINGUAGEM DE PROGRAMACAO");
+		materiaDTO.setCodigo("ILP");
+		materiaDTO.setFrequencia(1);
+		materiaDTO.setHoras(64);
+						
+		MateriaException materiaException = assertThrows(MateriaException.class, () -> this.materiaService.salvar(materiaDTO));
+		
+		assertEquals(HttpStatus.BAD_REQUEST, materiaException.getHttpStatus());
+		assertEquals(MessagesConstant.ERRO_ID_INFORMADO.getValor(), materiaException.getMessage());
+		
+		Mockito.verify(this.materiaRepository, times(0)).findByCodigo("ILP");
+		Mockito.verify(this.materiaRepository, times(0)).save(materiaEntity);		
+	}
+	
+	@Test
+	void testCadastrarComCodigoExistenteThrowMateriaException() {
+		
+		MateriaDTO materiaDTO = new MateriaDTO();
+		materiaDTO.setNome("INTRODUCAO A LINGUAGEM DE PROGRAMACAO");
+		materiaDTO.setCodigo("ILP");
+		materiaDTO.setFrequencia(1);
+		materiaDTO.setHoras(64);
+		
+		Mockito.when(this.materiaRepository.findByCodigo("ILP")).thenReturn(materiaEntity);
+		
+		MateriaException materiaException = assertThrows(MateriaException.class, () -> this.materiaService.salvar(materiaDTO));
+								
+		assertEquals(HttpStatus.BAD_REQUEST, materiaException.getHttpStatus());
+		assertEquals(MessagesConstant.ERRO_MATERIA_CADASTRADA_ANTERIORMENTE.getValor(), materiaException.getMessage());
+		
+		Mockito.verify(this.materiaRepository, times(1)).findByCodigo("ILP");
+		Mockito.verify(this.materiaRepository, times(0)).save(materiaEntity);		
 	}
 
 }
