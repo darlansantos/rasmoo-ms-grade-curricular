@@ -92,7 +92,7 @@ public class MateriaServiceImpl implements IMateriaService {
 			} catch (MateriaException m) {
 				throw m;
 			} catch (Exception e) {
-				throw e;
+				throw new MateriaException(MessagesConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
@@ -106,26 +106,36 @@ public class MateriaServiceImpl implements IMateriaService {
 			} catch (MateriaException m) {
 				throw m;
 			} catch (Exception e) {
-				throw e;
+				throw new MateriaException(MessagesConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
 		@Override
 		public List<MateriaDTO> listarPorHorarioMinimo(int horaMinima) {
-			List<MateriaEntity> list = this.materiaRepository.findByHoraMinima(horaMinima);
-			return list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+			
+			try {
+				List<MateriaEntity> list = this.materiaRepository.findByHoraMinima(horaMinima);
+				return list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());				
+			} catch (Exception e) {
+				throw new MateriaException(MessagesConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 
 		@Override
 		public List<MateriaDTO> listarPorFrequencia(int frequencia) {
-			List<MateriaEntity> list = this.materiaRepository.findByFrequencia(frequencia);
-			return list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());
+			
+			try {
+				List<MateriaEntity> list = this.materiaRepository.findByFrequencia(frequencia);
+				return list.stream().map(entity -> this.mapper.map(entity, MateriaDTO.class)).collect(Collectors.toList());				
+			} catch (Exception e) {
+				throw new MateriaException(MessagesConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 		
 		private Boolean cadastrarOuAtualizar(MateriaDTO materiaDTO) {
-			MateriaEntity materiaEnt = this.mapper.map(materiaDTO, MateriaEntity.class);
-			this.materiaRepository.save(materiaEnt);
-			return Boolean.TRUE;
-		}
+				MateriaEntity materiaEnt = this.mapper.map(materiaDTO, MateriaEntity.class);
+				this.materiaRepository.save(materiaEnt);
+				return Boolean.TRUE;				
+	    } 		
 		
 }
